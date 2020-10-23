@@ -1,14 +1,40 @@
 package com.dmilusheva.bikecompany.models;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 import java.math.BigDecimal;
 import java.util.Date;
 
+@Entity
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Bike {
+
+    /**
+     * As an entity for the database is created, there should be create a primary key for the object Bike.
+     * @Id -> So the next attribute, represents the primary key id for the class Bike (it has Long data type !).
+     *
+     * @GeneratedValue -> tells that this is the id field for the entity and we want to generate it,
+     * using the GenerationType.AUTO.
+     *
+     * Both annotations are used by JPA.
+     */
+    @Id
+    @GeneratedValue(strategy =  GenerationType.AUTO)
+    private Long id;
+
+
     private String name;
     private String email;
     private String phone;
     private String model;
     private String serialNumber;
+
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
     private BigDecimal purchasePrice;
     private Date purchaseDate;
     private boolean contact;
@@ -75,5 +101,13 @@ public class Bike {
 
     public void setContact(boolean contact) {
         this.contact = contact;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 }
