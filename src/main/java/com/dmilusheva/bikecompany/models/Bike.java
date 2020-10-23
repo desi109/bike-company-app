@@ -10,6 +10,10 @@ import javax.persistence.Id;
 import java.math.BigDecimal;
 import java.util.Date;
 
+
+/**
+ * @JsonIgnoreProperties -> ignore hibernateLazyInitializer and handler, which Hibernate adds automatically to our objects.
+ */
 @Entity
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Bike {
@@ -34,6 +38,10 @@ public class Bike {
     private String model;
     private String serialNumber;
 
+    /**
+     * @JsonIgnoreProperties -> ignore properties, which Hibernate adds automatically to our objects
+     * @JsonFormat -> allows customization
+     */
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
     private BigDecimal purchasePrice;
     private Date purchaseDate;
