@@ -176,6 +176,84 @@ In Postman we can test the API all the way down to the database layer by calling
 ---  
                                                                            
 # Creating the Angular Project
+  
+* Install ***Node.js***.   
+```
+sudo apt update && sudo apt install npm
+```   
+Simply, ***Node*** is a JavaScript server.   
+NPM - Node Package Manager  
+To check npm version:  
+```
+npm --version
+```    
+#  
+   
+* Install ***Yarn***. It is also a package manager as NPM.
+```
+sudo apt update &&  sudo npm install --global yarn
+```  
+To check yarn version:  
+```
+yarn --version
+```   
+#
+  
+* Install ***Angular CLI***
+```
+sudo npm install -g @angular/cli
+```  
+To check if Angular CLI is available:  
+```
+ng -v
+``` 
+Set Angular CLI to use the Yarn tool as the main dependency manager:  
+```
+sudo ng config -g cli.packageManager yarn
+``` 
+#
+   
+* Generate a new Angular app.    
+The project structure should look like this:
+```
+bike-company                    
+   └── bike-company       # Spring Boot App   
+   └── bike-company-ui    # Angular App
+```    
 
+Create Angular bike-company-ui app, as a stand-alone project. 
+```
+sudo ng new bike-company-ui -routing
+sudo chmod -R 777 bike-company-ui/
+```  
+    
+**Note:** If you have a problem with the last command, try to do next two steps and run the command again.
+```
+npm cache clean --force
+npm i -g @angular/cli
+```   
+   
+    
+To check if every thing is ok:  
+```
+cd bike-company-ui
+ng -v
+```     
+#
+   
+   
+* Start up the app:  
+```
+npm start
+```  
+ ***OR***  
+```
+ng serve
+```    
+#
 
+* Go to  ***~/bike-company/bike-company-ui/src/app/app.component.html*** and edit the HTML.
+
+* Setup a proxy
+* Add a service and components
 
