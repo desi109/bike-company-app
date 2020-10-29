@@ -58,7 +58,7 @@ Terminal command:
 ```
 spring init -l=java -g=com.dmilusheva -a=bikecompany -n=bikecompany --description="Bike company application" --package-name=com.dmilusheva.bikecompany -d=web,jpa,postgresql --build=maven -p=jar -j=11
 ```
-Run the app and browse http://localhost:8080. You will see a ***Whitelabel Error Page***. This actually means Spring Boot is
+Run the app with ```mvn spring-boot:run ``` and browse http://localhost:8080. You will see a ***Whitelabel Error Page***. This actually means Spring Boot is
 up and running, we just haven't defined any root or home page that it can respond to.  
 
 
@@ -187,8 +187,7 @@ To check npm version:
 ```
 npm --version
 ```    
-#  
-   
+#   
 * Install ***Yarn***. It is also a package manager as NPM.
 ```
 sudo apt update &&  sudo npm install --global yarn
@@ -198,7 +197,6 @@ To check yarn version:
 yarn --version
 ```   
 #
-  
 * Install ***Angular CLI***
 ```
 sudo npm install -g @angular/cli
@@ -211,8 +209,7 @@ Set Angular CLI to use the Yarn tool as the main dependency manager:
 ```
 sudo ng config -g cli.packageManager yarn
 ``` 
-#
-   
+# 
 * Generate a new Angular app.    
 The project structure should look like this:
 ```
@@ -239,9 +236,7 @@ To check if every thing is ok:
 cd bike-company-ui
 ng -v
 ```     
-#
-   
-   
+#   
 * Start up the app:  
 ```
 npm start
@@ -249,11 +244,146 @@ npm start
  ***OR***  
 ```
 ng serve
-```    
+```     
+#  
+* Check the app at ***localhost:4200*** .
 #
+* Go to  ***~/bike-company/bike-company-ui/src/app/app.component.html*** and edit the HTML.   
+#
+* Setup a proxy.   
+The proxy will forward requests from the ***Angular*** server running on port ***4200***, 
+to the ***Spring Boot*** server running on port ***8080***. To do that, create a new file for the proxy configuration: 
+***~/bike-company/bike-company-ui/proxy.conf.json*** 
+<br/>
+The file says to the ng JavaScript server, that if it sees any requests that come into it, that begin with "/server", 
+it should forward them on ***http://localhost:8080***.   <br/>
+Now, we should tell the Angular server to use the new proxy server that we just set up.
+Go to ***~/bike-company/bike-company-ui/proxy.conf.json*** and replace line ```"start": "ng serve",``` with 
+```"start": "ng serve --proxy-config proxy.conf.json",```. <br/>
+#
+### To check everything work fine:
+   * Open a new terminal and start your Spring Boot app:
+```
+cd ~/bike-company/bike-company 
+kill -9 $(lsof -t -i:8080)
+mvn spring-boot:run
+```
 
-* Go to  ***~/bike-company/bike-company-ui/src/app/app.component.html*** and edit the HTML.
+   * Open a new terminal and start your Angular app:
+```
+cd ~/bike-company/bike-company-ui
+kill -9 $(lsof -t -i:4200)
+npm start
+```
+   * Brows ***http://localhost:4200/server/api/v1/bikes***. You should see all registered bikes.
 
-* Setup a proxy
-* Add a service and components
+#
+* Add a services to your Angular app (this is easy to be done with Angular CLI). <br/>
+In the folder ***bike-company-ui***, generate (***g*** is for generate) service with name ```bike-company``` and 
+put everything in the ```services``` package: 
+```
+ng g service services/bike-company
+```
+Now we have ***~/bike-company/bike-company-ui/src/app/services/*** where a two new files are created. <br/>
+Go to ***~/bike-company-ui/src/app/app.module.ts*** and import the new BikeCompanyService by adding 
+```import { BikeCompanyService } from './services/bike-company.service';```. <br/>
+Add providers array ```providers: [BikeCompanyService],```. <br/>
+Import also ```import { HttpClientModule } from '@angular/common/http';```, it is the new HttpClientModule, which is 
+rewritten in Angular 4, and it is what allows us to talk with calls to our server back-end. We should also add it to 
+```
+  imports: [
+    BrowserModule,
+    AppRoutingModule,
+    HttpClientModule
+  ],
+```   
+#
+* Go to ***bike-company.service.ts*** and add the two imports:
+```
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Observable } from 'rxjs/Observable';
+```
+The HttpClient is responsible for making the calls out. Observable is going to return an observable, which is like 
+a promise that will come back with the information from the server. To make the HttpClient usable in our code we are 
+simply going to inject it into the BikeCompanyService class by adding it to the constructor 
+parameter list ```constructor(private http:HttpClient)```. <br/>
+Next let's create a function that will allow us to get all of the bikes from our database. So the service function name
+will be ***getBikes()*** and it is going to return the payload from this following url ***/server/api/v1/bikes***. 
+When we set up the proxy- anything that begins with ***/server/..*** is going to get proxied over to Spring Boot and 
+then anything on the following path after ***/server/..***, will be the path that is used on the Spring Boot server. 
+So we are just going to take the server and forward on ***/api/v1/bikes*** to Spring Boot. This will get returned to the
+***getBikes()*** method and will be returned as an observable. 
+#
+* Set up some HTTP options as a constant by adding:
+```
+const httpOptions = {
+  headers: new HttpHeaders({'Content-Type': 'application/json'})
+}; 
+```
+#
+* Add a components to your Angular app (this is easy to be done with Angular CLI). <br/>
+In the folder ***bike-company-ui***, generate (***g*** is for generate) component with name ```admin``` and 
+put everything in the ```components``` package: 
+```
+ng g component components/admin
+```
+Now we have ***~/bike-company/bike-company-ui/src/app/components/admin*** where a new files are created. <br/>
+Go to ***admin.component.ts*** and import the new BikeCompanyService by adding 
+```import { BikeCompanyService } from '../../services/bike-company.service';```. <br/>
+To make the BikeCompanyService usable in our code we are going to inject it by adding it to the constructor 
+parameter list ```constructor(private bikeCompanyService: BikeCompanyService)```. <br/>
+#
+* Create a public variable to hold all of the bikes that are returned from the back-end by adding ```public bikes;``. 
+At this point we can now make a call over to the BikeCompanyService to retrieve all the bikes and store them in this 
+public bikes variable. So let's add a new function to do that:
+```
+  getBikes() {
+    this.bikeCompanyService.getBikes().subscribe(
+      data => { this.bikes = data},
+      err => console.error(err),
+      () => console.log('bikes loaded')
+    );
+  }
+```
+What is happening in this function? We are going to call the bikeCompanyService that we have just created. We will call 
+the getBikes() method, which returns an observable. We will subscribe to that. We can then either get the 
+data ```data => { this.bike = data},``` or we will get an error back ```err => console.error(err),```. We can log out to 
+the console that our bikes were loaded ```() => console.log('bikes loaded')```. And finally, this method is not going to get called
+unless we tell the component to call it. Just by defining it doesn't mean that it will get called. We need to tell it
+when and how to be called and we can do that in the ngOnInIt() function by adding ```this.getBikes();```. At this point 
+the component should be wired up and ready to display the bikes. 
+#
+* Update the HTML to actually loop through all of the bikes and display them in HTML format. The HTML is located in 
+***admin.component.html*** and a general basic HTML stub was put in place when we created this component, but we want to
+ replace it with something that will display our bikes. So edit it. <br/>
+ <br/>
+ At this point we are ready to test the UI. We have wired in a component to the service, which talks to the back-end 
+ through our proxy. The last thing we need to set up is the router so that we can navigate to it correctly from the browser.
+#
+* Setting up the Router. <br/> 
+We need to set up the Angular routing portion of the application. When we specified the --routing switch when we created
+this project, it created the ***~/bike-company-ui/src/app/app-routing.module.ts*** file. This is where your routes will 
+go andconstants a defined routes for your application in ```const routes: Routes = [];``` . Creat the admin route which 
+is consists of an admin path with the component, which is our admin component. 
+```
+{
+path: 'admin',
+component: AdminComponent
+}
+```
+Import that as well by adding ```import { AdminComponent} from './components/admin/admin.component';```. <br/> 
+Finally, to finish setting up the router properly you need to make sure that in the ***app.component.html*** file we have 
+the router outlet set up. At the bottom of this file we will specify the router-outlet tag by adding
+```<router-outlet></router-outlet>```. This sets up the basic app component as the layout or a template, which means that
+we will always have the header ***Bike Registry System***, for all files or all URLs. <br/>
+<br/>
+To check everything work fine:
+```
+npm install --save rxjs-compat 
+cd ~/bike-company/bike-company-ui
+kill -9 $(lsof -t -i:4200)
+npm start
+```
+Brows ***http:/localhost:4200/admin*** and you should see this: <br/>
+![localhost:4200/admin](https://github.com/desi109/bike-company-app/blob/master/images/localhost:4200-admin.jpg?raw=true)
 
