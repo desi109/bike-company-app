@@ -360,6 +360,7 @@ the component should be wired up and ready to display the bikes.
  At this point we are ready to test the UI. We have wired in a component to the service, which talks to the back-end 
  through our proxy. The last thing we need to set up is the router so that we can navigate to it correctly from the browser.
 #  
+
 * Setting up the Router. <br/> 
 We need to set up the Angular routing portion of the application. When we specified the --routing switch when we created
 this project, it created the ***~/bike-company-ui/src/app/app-routing.module.ts*** file. This is where your routes will 
@@ -370,7 +371,8 @@ is consists of an admin path with the component, which is our admin component.
 path: 'admin',
 component: AdminComponent
 }
-```
+```   
+
 Import that as well by adding ```import { AdminComponent} from './components/admin/admin.component';```. <br/> 
 Finally, to finish setting up the router properly you need to make sure that in the ***app.component.html*** file we have 
 the router outlet set up. At the bottom of this file we will specify the router-outlet tag by adding
