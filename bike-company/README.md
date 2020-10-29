@@ -388,4 +388,102 @@ npm start
 ```
 Brows ***http:/localhost:4200/admin*** and you should see this: <br/>
 ![localhost:4200/admin](https://github.com/desi109/bike-company-app/blob/master/images/localhost:4200-admin.jpg?raw=true)
+                                                                           
+                                                                           
+---  
+---  
+                                                                           
+# Finish the Angular Screens
 
+* In ***~/bike-company-ui/src/app/services/bike-company.service.ts***, add ***getBike(id: number)*** and 
+***createBikeRegistration(bike)*** methods.
+#
+* Add a new component for the home page, to your Angular app (this is easy to be done with Angular CLI). <br/>
+In the folder ***bike-company-ui***, generate (***g*** is for generate) component with name ```home``` and 
+put everything in the ```components``` package: 
+```
+ng g component components/home
+```
+Go to ***app-routing.module.ts*** and import the new component by adding 
+```import { HomeComponent} from './components/home/home.component';```. <br/>   
+Create a new path for it: 
+```
+  {
+    path: '',
+    component: HomeComponent
+  },
+```   
+<br/>   
+* Go to ***home.components.ts*** and add ```import { BikeCompanyService } from '../../services/bike-company.service';```. <br/>   
+Also edit the constructor: ```  constructor(private bikeCompanyService: BikeCompanyService) { }```   <br/>>  
+Create and validate all forms, again into this file. <br/>   
+Add some html into ***home.components.html***   
+
+#
+* Go to ***app.module.ts*** and add ```import { ReactiveFormsModule } from '@angular/forms';```. <br/>   
+Also edit: 
+```
+  imports: [
+    BrowserModule,
+    AppRoutingModule,
+    HttpClientModule, 
+    ReactiveFormsModule
+  ],
+```    
+#
+* Add ***submitRegistration()*** method into ***home.component.ts***. Also import ```import { Observable } from 'rxjs/Observable';```
+
+#
+* Start it again and browse ***http://localhost:4200/***.    
+#
+* Add a new component for the home page, to your Angular app (this is easy to be done with Angular CLI). <br/>
+In the folder ***bike-company-ui***, generate (***g*** is for generate) component with name ```view-registration``` and 
+put everything in the ```components``` package: 
+```
+ng g component components/view-registration
+```    
+Go to ***app-routing.module.ts*** and import the new component by adding 
+```import { ViewRegistrationComponent} from './components/view-registration/view-registration.component';```. <br/>   
+Create a new path for it: 
+```
+{
+    path: 'admin/view/:id',
+    component: ViewRegistrationComponent
+  },
+```   
+<br/>   
+
+* Go to ***iew-registration.components.ts*** and add ```import { BikeCompanyService } from '../../services/bike-company.service';``` . <br/>   
+Also edit the constructor: ```  constructor(private bikeCompanyService: BikeCompanyService) { }```   <br/> 
+
+Add variable ***bikeReg*** and method ***getBikeReg(id: number)*** .  <br/>
+Also import ```import { ActivateRoute } from '@angular/router';``` .  <br/> 
+Edit ***ngOnInit()***:
+```
+  ngOnInit(): void {
+    this.getBikeReg(this.route.snapshot.params.id);
+  }
+```    
+<br/>   
+
+Edit the constructor ```constructor(private bikeCompanyService: BikeCompanyService, private route: ActivatedRoute) { ```.
+<br/>   
+
+Add some html into ***view-registration.components.html***  
+
+#
+* Go to *** admin.component.html*** and replace:
+```
+  <td>
+    {{bike.name}}
+  </td>
+```
+with 
+```
+  <td>
+    <a [routerLink]="['/admin/view', bike.id]">{{bike.name}}</a>
+  </td>
+```
+
+#
+* Start it again and browse ***http://localhost:4200/admin*** and ***http://localhost:4200/admin/view/2***.
