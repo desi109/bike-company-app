@@ -356,10 +356,10 @@ the component should be wired up and ready to display the bikes.
 * Update the HTML to actually loop through all of the bikes and display them in HTML format. The HTML is located in 
 ***admin.component.html*** and a general basic HTML stub was put in place when we created this component, but we want to
  replace it with something that will display our bikes. So edit it. <br/>
- <br/>
+ <br/>   
  At this point we are ready to test the UI. We have wired in a component to the service, which talks to the back-end 
  through our proxy. The last thing we need to set up is the router so that we can navigate to it correctly from the browser.
-#
+#  
 * Setting up the Router. <br/> 
 We need to set up the Angular routing portion of the application. When we specified the --routing switch when we created
 this project, it created the ***~/bike-company-ui/src/app/app-routing.module.ts*** file. This is where your routes will 
@@ -376,7 +376,7 @@ Finally, to finish setting up the router properly you need to make sure that in 
 the router outlet set up. At the bottom of this file we will specify the router-outlet tag by adding
 ```<router-outlet></router-outlet>```. This sets up the basic app component as the layout or a template, which means that
 we will always have the header ***Bike Registry System***, for all files or all URLs. <br/>
-<br/>
+<br/>   
 To check everything work fine:
 ```
 npm install --save rxjs-compat 
