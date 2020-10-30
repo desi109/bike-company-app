@@ -486,4 +486,27 @@ with
 ```
 
 #
-* Start it again and browse ***http://localhost:4200/admin*** and ***http://localhost:4200/admin/view/2***.
+* Start it again and browse ***http://localhost:4200/admin*** and ***http://localhost:4200/admin/view/2***. <br/>
+
+* Install Bootstrap by running:
+```
+cd ~/bike-company/bike-company-ui
+npm install bootstrap@4.5.3 --save
+npm install @angular-devkit/core --save
+
+```
+Add ```@import '~bootstrap/dist/css/bootstrap.min.css';``` into ***~/bike-company/bike-company-ui/src/styles.css***. <br/>
+Add ***~/bike-company/bike-company-ui/src/css/bike.css*** file. <br/>
+Add ```@import './css/bike.css';``` into ***~/bike-company/bike-company-ui/src/styles.css***. <br/>  
+Restart the app.
+#
+* Add ***~/bike-company/bike-company-ui/server.js*** file. <br/>
+
+* Run 
+```
+npm install express-http-proxy --save
+npm install cors --save
+npm install port --save
+ng build --prod
+node server.js
+```

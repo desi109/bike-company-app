@@ -1,12 +1,11 @@
 package com.dmilusheva.bikecompany.models;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.math.BigDecimal;
 import java.util.Date;
 
@@ -27,8 +26,9 @@ public class Bike {
      *
      * Both annotations are used by JPA.
      */
-    @Id
-    @GeneratedValue(strategy =  GenerationType.AUTO)
+    @Id       //Hibernate will create an id for us.
+    @GeneratedValue (strategy = GenerationType.AUTO)
+    @JsonIgnore
     private Long id;
 
 
@@ -38,14 +38,18 @@ public class Bike {
     private String model;
     private String serialNumber;
 
+
+    private BigDecimal purchasePrice;
     /**
      * @JsonIgnoreProperties -> ignore properties, which Hibernate adds automatically to our objects
      * @JsonFormat -> allows customization
      */
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
-    private BigDecimal purchasePrice;
     private Date purchaseDate;
     private boolean contact;
+
+    public Bike() {
+    }
 
     public String getName() {
         return name;
@@ -111,10 +115,12 @@ public class Bike {
         this.contact = contact;
     }
 
+    @JsonProperty
     public Long getId() {
-        return id;
+        return id; //only allow user to get not set
     }
 
+    @JsonIgnore
     public void setId(Long id) {
         this.id = id;
     }
